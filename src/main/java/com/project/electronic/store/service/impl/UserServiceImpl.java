@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -88,7 +89,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new GlobalException("user not found", HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND));
-        userRepository.delete(user);
+        try {
+            Path path=Paths.get(user.getUserImagePath());
+            Files.delete(path);
+            userRepository.delete(user);
+        }catch (Exception e){
+            log.error("error while deleting user {}",e.getMessage());
+            throw new GlobalException("failed to delete user",HttpStatus.EXPECTATION_FAILED.value(), HttpStatus.EXPECTATION_FAILED);
+        }
     }
 
     @Override
