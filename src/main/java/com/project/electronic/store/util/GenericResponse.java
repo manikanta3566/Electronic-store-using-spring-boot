@@ -1,4 +1,4 @@
-package com.project.electronic.store.helper;
+package com.project.electronic.store.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

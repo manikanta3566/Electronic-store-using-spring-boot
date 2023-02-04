@@ -5,8 +5,14 @@ import com.project.electronic.store.entity.User;
 import com.project.electronic.store.exception.GlobalException;
 import com.project.electronic.store.repository.UserRepository;
 import com.project.electronic.store.service.UserService;
+import com.project.electronic.store.util.CommonUtil;
+import com.project.electronic.store.util.ListingResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -40,9 +46,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
+    public ListingResponse<UserDto> getAllUsers(int pageNumber, int pageSize, String sortBy, String sortDir) {
+        Sort sort="ASC".equalsIgnoreCase(sortDir)?Sort.by(sortBy).ascending():Sort.by(sortBy).descending();
+        Pageable pageable= PageRequest.of(pageNumber,pageSize,sort);
+        Page<User> users = userRepository.findAll(pageable);
+        ListingResponse<UserDto> listingResponse = CommonUtil.getListingResponse(users, UserDto.class);
+        return listingResponse;
     }
 
     @Override

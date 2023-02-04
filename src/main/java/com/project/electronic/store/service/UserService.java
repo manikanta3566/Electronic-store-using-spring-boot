@@ -1,6 +1,7 @@
 package com.project.electronic.store.service;
 
 import com.project.electronic.store.dto.UserDto;
+import com.project.electronic.store.util.ListingResponse;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ public interface UserService {
 
    UserDto getUserById(String id);
 
-   List<UserDto> getAllUsers();
+   ListingResponse<UserDto> getAllUsers(int pageNumber, int pageSize, String sortBy, String sortDir);
 
    UserDto updateUser(UserDto userDto,String id);
 
