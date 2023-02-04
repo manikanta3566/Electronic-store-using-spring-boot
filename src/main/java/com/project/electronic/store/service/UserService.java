@@ -1,7 +1,9 @@
 package com.project.electronic.store.service;
 
+import com.project.electronic.store.dto.FileResponse;
 import com.project.electronic.store.dto.UserDto;
-import com.project.electronic.store.util.ListingResponse;
+import com.project.electronic.store.dto.ListingResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,6 +20,10 @@ public interface UserService {
    void deleteUser(String id);
 
    List<UserDto> searchUser(String keyword);
+
+   FileResponse userImageUpload(MultipartFile file,String id);
+
+   byte[] getUserImageResources(String userId);
 
 
 }

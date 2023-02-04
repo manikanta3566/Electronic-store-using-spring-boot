@@ -1,4 +1,4 @@
-package com.project.electronic.store.util;
+package com.project.electronic.store.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +19,12 @@ public class GenericResponse<T> {
     public GenericResponse(T data){
         this.data=data;
         statusCode= HttpStatus.OK.value();
+        timestamp=System.currentTimeMillis();
+    }
+
+    public GenericResponse(T data,int statusCode){
+        this.data=data;
+        this.statusCode= statusCode;
         timestamp=System.currentTimeMillis();
     }
 

@@ -1,13 +1,15 @@
 package com.project.electronic.store.controller;
 
+import com.project.electronic.store.dto.GenericResponse;
+import com.project.electronic.store.dto.ListingResponse;
 import com.project.electronic.store.dto.UserDto;
-import com.project.electronic.store.util.GenericResponse;
 import com.project.electronic.store.service.UserService;
-import com.project.electronic.store.util.ListingResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -59,6 +61,17 @@ public class UserController {
     public ResponseEntity<GenericResponse> searchUser(@PathVariable("keyword") String keyword) {
         List<UserDto> users = userService.searchUser(keyword);
         return new ResponseEntity<>(new GenericResponse<>(users), HttpStatus.OK);
+    }
+
+    @PostMapping("/image/{userId}")
+    public ResponseEntity<GenericResponse> uploadUserImage(@PathVariable String userId, @RequestParam("file")MultipartFile file){
+        return new ResponseEntity<>(new GenericResponse(userService.userImageUpload(file,userId),HttpStatus.CREATED.value()),HttpStatus.CREATED);
+    }
+
+    @GetMapping(value = "/image/{userId}",produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> serveUserImage(@PathVariable String userId){
+      return ResponseEntity
+              .ok(userService.getUserImageResources(userId));
     }
 
 }
