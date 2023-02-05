@@ -36,8 +36,6 @@ public class UserServiceImpl implements UserService {
 
     private static final String USER_IMAGE_PATH="USER_IMAGES";
 
-    private static final Set<String> userImageFileExtensions=Set.of(".png",".jpg");
-
     @Value("${image.path}")
     private  String basePath;
 
@@ -110,7 +108,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).
                 orElseThrow(() -> new GlobalException("user not found", HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND));
             String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-            if (!userImageFileExtensions.contains(extension)) {
+            if (!CommonUtil.imageFileExtensions.contains(extension)) {
                 throw new GlobalException("file extension " + extension + " not allowed", HttpStatus.EXPECTATION_FAILED.value(), HttpStatus.EXPECTATION_FAILED);
             }
             String fileName = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf(".")) + "_"

@@ -1,4 +1,4 @@
-package com.project.electronic.store.exception;
+package com.project.electronic.store.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
