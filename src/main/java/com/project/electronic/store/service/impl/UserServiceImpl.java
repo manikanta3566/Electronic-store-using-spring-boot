@@ -27,16 +27,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @Log4j2
 public class UserServiceImpl implements UserService {
 
-    private static final String USER_IMAGE_PATH="USER_IMAGES";
-
-    @Value("${image.path}")
+    @Value("${image.path.user}")
     private  String basePath;
 
     @Autowired
@@ -107,14 +104,12 @@ public class UserServiceImpl implements UserService {
     public FileResponse userImageUpload(MultipartFile file, String id) {
         User user = userRepository.findById(id).
                 orElseThrow(() -> new GlobalException("user not found", HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND));
-            String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+            String extension = CommonUtil.getExtensionFromFile(file);
             if (!CommonUtil.imageFileExtensions.contains(extension)) {
                 throw new GlobalException("file extension " + extension + " not allowed", HttpStatus.EXPECTATION_FAILED.value(), HttpStatus.EXPECTATION_FAILED);
             }
-            String fileName = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf(".")) + "_"
-                    + System.currentTimeMillis() + extension;
-
-            Path path = Paths.get(basePath).resolve(USER_IMAGE_PATH).resolve(fileName);
+            String fileName = CommonUtil.getFileNameWithTimestamp(file)+ extension;
+            Path path = Paths.get(basePath).resolve(fileName);
             user.setUserImagePath(String.valueOf(path));
             userRepository.save(user);
             return fileService.uploadFile(file, path);

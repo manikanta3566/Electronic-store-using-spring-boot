@@ -29,9 +29,7 @@ import java.util.stream.Collectors;
 @Log4j2
 public class CategoryServiceImpl implements CategoryService {
 
-    private static final String CATEGORY_IMAGE_PATH = "CATEGORY_IMAGES";
-
-    @Value("${image.path}")
+    @Value("${image.path.category}")
     private String basePath;
 
     @Autowired
@@ -94,14 +92,12 @@ public class CategoryServiceImpl implements CategoryService {
     public FileResponse uploadImage(String id, MultipartFile file) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new GlobalException("category not found", HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND));
-        String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+        String extension =CommonUtil.getExtensionFromFile(file);
         if (!CommonUtil.imageFileExtensions.contains(extension)) {
             throw new GlobalException("file extension " + extension + " not allowed", HttpStatus.EXPECTATION_FAILED.value(), HttpStatus.EXPECTATION_FAILED);
         }
-        String fileName = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf(".")) + "_"
-                + System.currentTimeMillis() + extension;
-
-        Path path = Paths.get(basePath).resolve(CATEGORY_IMAGE_PATH).resolve(fileName);
+        String fileName =CommonUtil.getFileNameWithTimestamp(file)+ extension;
+        Path path = Paths.get(basePath).resolve(fileName);
         category.setCoverImagePath(String.valueOf(path));
         categoryRepository.save(category);
         return fileService.uploadFile(file, path);

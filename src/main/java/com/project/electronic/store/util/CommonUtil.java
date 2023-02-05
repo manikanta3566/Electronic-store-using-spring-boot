@@ -3,6 +3,7 @@ package com.project.electronic.store.util;
 import com.project.electronic.store.dto.ListingResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Set;
@@ -21,6 +22,14 @@ public class CommonUtil {
         listingResponse.setTotalPages(entity.getTotalPages());
         listingResponse.setLastPage(entity.isLast());
         return listingResponse;
+    }
 
+    public static String getExtensionFromFile(MultipartFile file){
+        return file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+    }
+
+    public static String getFileNameWithTimestamp(MultipartFile file){
+        return file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf(".")) + "_"
+                + System.currentTimeMillis();
     }
 }
