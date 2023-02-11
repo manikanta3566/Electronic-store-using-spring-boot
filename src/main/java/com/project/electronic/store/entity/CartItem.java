@@ -1,13 +1,15 @@
 package com.project.electronic.store.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.UUID;
 
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "cart_items")
 public class CartItem {
@@ -25,6 +27,13 @@ public class CartItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Cart cart;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean isDeleted;
 
     public CartItem() {
         this.id = UUID.randomUUID().toString();

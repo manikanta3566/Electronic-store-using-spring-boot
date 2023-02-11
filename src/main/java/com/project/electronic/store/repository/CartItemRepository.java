@@ -13,8 +13,8 @@ import java.util.List;
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItem,String> {
 
-    @Query(value = "select id from cart_items where cart_id=:id",nativeQuery = true)
-    List<String> findByCartId(@Param("id") String cartId);
+    @Query(value = "select * from cart_items where cart_id=:id",nativeQuery = true)
+    List<CartItem> findByCartId(@Param("id") String cartId);
 
     @Modifying
     @Transactional

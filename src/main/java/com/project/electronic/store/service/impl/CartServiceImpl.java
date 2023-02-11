@@ -58,11 +58,11 @@ public class CartServiceImpl implements CartService {
         }
 
         AtomicBoolean isItemPresent = new AtomicBoolean(false);
-        List<CartItem> cartItems = cart.getItems().stream().map(cartItem -> {
+        List<CartItem> cartItems = cart.getItems().stream().filter(cartItem -> !cartItem.isDeleted()).map(cartItem -> {
             if (cartItem.getProduct().getId().equals(cartItemRequest.getProductId())) {
                 cartItem.setQuantity(cartItem.getQuantity());
                 cartItem.setTotalAmount(cartItemRequest.getQuantity() * product.getPrice());
-                isItemPresent.set(true);
+                    isItemPresent.set(true);
             }
             return cartItem;
         }).collect(Collectors.toList());
@@ -93,7 +93,8 @@ public class CartServiceImpl implements CartService {
         CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(() -> new GlobalException("cart item not found", HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND));
         List<CartItem> removedCartItems = cart.getItems().stream().filter(item -> !cartItemId.equals(item.getId())).collect(Collectors.toList());
         cart.setItems(removedCartItems);
-        cartItemRepository.delete(cartItem);
+        cartItem.setDeleted(true);
+        cartItemRepository.save(cartItem);
         Cart updatedCart = cartRepository.save(cart);
         return modelMapper.map(updatedCart, CartDto.class);
     }
@@ -103,8 +104,12 @@ public class CartServiceImpl implements CartService {
         User user = userRepository.findById(userId).
                 orElseThrow(() -> new GlobalException("user not found", HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND));
         Cart cart = cartRepository.findByUser(user).orElseThrow(() -> new GlobalException("cart not found for given user", HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND));
-        List<String> items = cartItemRepository.findByCartId(cart.getId());
-        cartItemRepository.deleteCartItems(items);
+        List<CartItem> items = cartItemRepository.findByCartId(cart.getId());
+        List<CartItem> updatedCartItems = items.stream().map(cartItem -> {
+            cartItem.setDeleted(true);
+            return cartItem;
+        }).collect(Collectors.toList());
+        cartItemRepository.saveAll(updatedCartItems);
     }
 
     @Override
@@ -112,6 +117,7 @@ public class CartServiceImpl implements CartService {
         User user = userRepository.findById(userId).
                 orElseThrow(() -> new GlobalException("user not found", HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND));
         Cart cart = cartRepository.findByUser(user).orElseThrow(() -> new GlobalException("cart not found for given user", HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND));
+        cart.setItems(cart.getItems().stream().filter(cartItem -> !cartItem.isDeleted()).collect(Collectors.toList()));
         return modelMapper.map(cart, CartDto.class);
     }
 }
