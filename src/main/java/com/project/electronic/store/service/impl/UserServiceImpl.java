@@ -19,6 +19,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +35,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Log4j2
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService , UserDetailsService {
 
     @Value("${image.path.user}")
     private  String basePath;
@@ -45,11 +49,14 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public UserDto createUser(UserDto userDto) {
         User user = new User();
         user.setUsername(userDto.getUsername());
-        user.setPassword(userDto.getPassword());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setEmail(userDto.getEmail());
         user.setUserImagePath(userDto.getUserImagePath());
         User savedUser = userRepository.save(user);
@@ -127,5 +134,12 @@ public class UserServiceImpl implements UserService {
          log.error("error while reading user image resources");
         }
         return bytes;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(username).
+                orElseThrow(() -> new GlobalException("user not found", HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND));
+        return user;
     }
 }
