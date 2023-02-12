@@ -3,6 +3,7 @@ package com.project.electronic.store.exception;
 import com.project.electronic.store.dto.ExceptionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -25,5 +26,14 @@ public class ExceptionHandlers {
         List<String> errors = exception.getFieldErrors().stream().map(fieldError -> fieldError.getDefaultMessage()).collect(Collectors.toList());
         exceptionResponse.setDetails(errors);
         return new ResponseEntity<>(exceptionResponse,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ExceptionResponse> authenticationException(AuthenticationException exception){
+        ExceptionResponse exceptionResponse=new ExceptionResponse();
+        exceptionResponse.setMessage(exception.getMessage());
+        exceptionResponse.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+        exceptionResponse.setHttpStatus(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(exceptionResponse,HttpStatus.UNAUTHORIZED);
     }
 }
