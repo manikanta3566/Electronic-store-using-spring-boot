@@ -22,9 +22,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
@@ -40,7 +37,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Log4j2
-public class UserServiceImpl implements UserService , UserDetailsService {
+public class UserServiceImpl implements UserService {
 
     @Value("${image.path.user}")
     private  String basePath;
@@ -144,12 +141,5 @@ public class UserServiceImpl implements UserService , UserDetailsService {
          log.error("error while reading user image resources");
         }
         return bytes;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username).
-                orElseThrow(() -> new GlobalException("user not found", HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND));
-        return user;
     }
 }
