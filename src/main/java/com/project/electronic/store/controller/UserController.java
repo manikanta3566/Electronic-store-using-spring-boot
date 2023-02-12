@@ -4,6 +4,7 @@ import com.project.electronic.store.dto.GenericResponse;
 import com.project.electronic.store.dto.ListingResponse;
 import com.project.electronic.store.dto.UserDto;
 import com.project.electronic.store.service.UserService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("v0/api/users")
+@Api(value = "UserController",description = "User Controller",tags = "User")
 public class UserController {
 
     @Autowired

@@ -31,6 +31,14 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    private final String[] PUBLIC_URLS={
+            "/swagger-ui/**",
+            "/webjars/**",
+            "/swagger-resources/**",
+            "/v3/api-docs",
+            "/v2/api-docs"
+    };
+
     //password encoder bean
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -91,6 +99,7 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .authorizeRequests()
+                .antMatchers(PUBLIC_URLS).permitAll()
                 .antMatchers(HttpMethod.POST,"/v0/api/users").permitAll()
                 .antMatchers("/v0/api/auth/login").permitAll()
                 .antMatchers("/v0/api/carts/**").hasAnyRole("NORMAL","ADMIN")
