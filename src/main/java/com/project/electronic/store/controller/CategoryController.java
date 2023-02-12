@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +20,7 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<GenericResponse> create(@Valid @RequestBody CategoryDto categoryDto) {
         return new ResponseEntity<>(new GenericResponse<>(categoryService.create(categoryDto), HttpStatus.CREATED.value()), HttpStatus.CREATED);
@@ -39,12 +41,14 @@ public class CategoryController {
         return new ResponseEntity<>(new GenericResponse<>(categoryService.update(categoryId, categoryDto)), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @DeleteMapping("{categoryId}")
     public ResponseEntity<GenericResponse> delete(@PathVariable String categoryId) {
         categoryService.delete(categoryId);
         return new ResponseEntity<>(new GenericResponse<>("deleted successfully"), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping("/images/{categoryId}")
     public ResponseEntity<GenericResponse> uploadImage(@PathVariable String categoryId, @RequestParam("file") MultipartFile file) {
         return new ResponseEntity<>(new GenericResponse<>(categoryService.uploadImage(categoryId, file)), HttpStatus.OK);

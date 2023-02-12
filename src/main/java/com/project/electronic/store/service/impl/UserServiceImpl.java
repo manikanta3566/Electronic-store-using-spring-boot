@@ -3,8 +3,11 @@ package com.project.electronic.store.service.impl;
 import com.project.electronic.store.dto.FileResponse;
 import com.project.electronic.store.dto.ListingResponse;
 import com.project.electronic.store.dto.UserDto;
+import com.project.electronic.store.entity.Role;
 import com.project.electronic.store.entity.User;
+import com.project.electronic.store.enums.Roles;
 import com.project.electronic.store.exception.GlobalException;
+import com.project.electronic.store.repository.RoleRepository;
 import com.project.electronic.store.repository.UserRepository;
 import com.project.electronic.store.service.FileService;
 import com.project.electronic.store.service.UserService;
@@ -31,6 +34,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,15 +55,20 @@ public class UserServiceImpl implements UserService , UserDetailsService {
     private FileService fileService;
 
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDto createUser(UserDto userDto) {
+        Optional<Role> role = roleRepository.findByName(Roles.ROLE_NORMAL.toString());
         User user = new User();
         user.setUsername(userDto.getUsername());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setEmail(userDto.getEmail());
         user.setUserImagePath(userDto.getUserImagePath());
+        user.setRoles(Set.of(role.get()));
         User savedUser = userRepository.save(user);
         return modelMapper.map(savedUser, UserDto.class);
     }

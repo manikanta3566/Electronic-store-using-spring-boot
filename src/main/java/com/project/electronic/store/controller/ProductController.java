@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,11 +18,13 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<GenericResponse> create(@RequestBody ProductDto productDto) {
         return new ResponseEntity<>(new GenericResponse<>(productService.create(productDto), HttpStatus.CREATED.value()), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping("/categories/{categoryId}")
     public ResponseEntity<GenericResponse> createProductWithCategory(@RequestBody ProductDto productDto,@PathVariable String categoryId){
         return new ResponseEntity<>(new GenericResponse<>(productService.createProductWithCategory(categoryId,productDto),HttpStatus.CREATED.value()),HttpStatus.CREATED);
@@ -41,16 +44,19 @@ public class ProductController {
         return new ResponseEntity<>(new GenericResponse<>(productService.getProductById(productId)), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PutMapping("{productId}")
     public ResponseEntity<GenericResponse> update(@PathVariable String productId, @RequestBody ProductDto productDto) {
         return new ResponseEntity<>(new GenericResponse<>(productService.update(productId, productDto)), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PutMapping("{productId}/categories/{categoryId}")
     public ResponseEntity<GenericResponse> updateProductWithCategory(@PathVariable String productId,@PathVariable String categoryId){
         return new ResponseEntity<>(new GenericResponse<>(productService.updateProductWithCategory(productId,categoryId)),HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @DeleteMapping("{productId}")
     public ResponseEntity<GenericResponse> delete(@PathVariable String productId) {
         productService.delete(productId);
@@ -62,8 +68,9 @@ public class ProductController {
         return new ResponseEntity<>(new GenericResponse<>(productService.search(keyword)), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping("/images/{productId}")
-    public ResponseEntity<GenericResponse> uploadUserImage(@PathVariable String productId, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<GenericResponse> uploadProductImage(@PathVariable String productId, @RequestParam("file") MultipartFile file) {
         return new ResponseEntity<>(new GenericResponse(productService.uploadImage(productId, file), HttpStatus.CREATED.value()), HttpStatus.CREATED);
     }
 

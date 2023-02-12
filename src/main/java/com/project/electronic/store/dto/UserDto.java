@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,6 +32,8 @@ public class UserDto {
     private LocalDateTime createdDate;
 
     private String userImagePath;
+
+    private Set<RoleDto> roles;
 
     @JsonIgnore
     public String getPassword() {

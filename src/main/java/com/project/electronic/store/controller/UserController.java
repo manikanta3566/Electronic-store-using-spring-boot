@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +28,7 @@ public class UserController {
         return new ResponseEntity<>(new GenericResponse<>(user), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<GenericResponse> getAllUsers(
             @RequestParam(value = "pageNumber",defaultValue ="0",required = false) int pageNumber,
@@ -51,12 +53,14 @@ public class UserController {
         return new ResponseEntity<>(new GenericResponse<>(user), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @DeleteMapping("{userId}")
     public ResponseEntity<GenericResponse> deleteUser(@PathVariable("userId") String id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(new GenericResponse<>("user deleted successfully"), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/search/{keyword}")
     public ResponseEntity<GenericResponse> searchUser(@PathVariable("keyword") String keyword) {
         List<UserDto> users = userService.searchUser(keyword);
