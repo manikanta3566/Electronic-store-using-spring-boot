@@ -27,10 +27,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -95,12 +97,15 @@ public class UserServiceImpl implements UserService {
         return modelMapper.map(updatedUser, UserDto.class);
     }
 
+    @Transactional
     @Override
     public void deleteUser(String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new GlobalException("user not found", HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND));
         try {
-            Path path=Paths.get(user.getUserImagePath());
-            Files.delete(path);
+            if(Objects.nonNull(user.getUserImagePath())) {
+                Path path = Paths.get(user.getUserImagePath());
+                Files.delete(path);
+            }
             userRepository.delete(user);
         }catch (Exception e){
             log.error("error while deleting user {}",e.getMessage());

@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -41,6 +42,12 @@ public class User implements UserDetails {
 
     @ManyToMany(cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
     private Set<Role> roles;
+
+    @OneToOne(mappedBy = "user",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    private Cart cart;
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
+    private List<Order> orders;
 
     public User(){
         id= UUID.randomUUID().toString();
