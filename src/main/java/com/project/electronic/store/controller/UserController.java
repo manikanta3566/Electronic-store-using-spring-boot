@@ -17,7 +17,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("v0/api/users")
+@RequestMapping("/v0/api/users")
 @Api(value = "UserController",description = "User Controller",tags = "User")
 public class UserController {
 

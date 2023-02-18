@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("v0/api/products")
+@RequestMapping("/v0/api/products")
 public class ProductController {
 
     @Autowired

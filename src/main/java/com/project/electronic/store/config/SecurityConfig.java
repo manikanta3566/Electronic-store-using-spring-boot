@@ -102,6 +102,7 @@ public class SecurityConfig {
                 .antMatchers(PUBLIC_URLS).permitAll()
                 .antMatchers(HttpMethod.POST,"/v0/api/users").permitAll()
                 .antMatchers("/v0/api/auth/login").permitAll()
+                .antMatchers("/v0/api/roles/**").hasAnyRole("ADMIN")
                 .antMatchers("/v0/api/carts/**").hasAnyRole("NORMAL","ADMIN")
                 .antMatchers("/v0/api/orders").hasAnyRole("NORMAL","ADMIN")
                 .anyRequest()
