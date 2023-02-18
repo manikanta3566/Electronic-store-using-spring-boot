@@ -21,7 +21,7 @@ public class OrderController {
         return new ResponseEntity<>(new GenericResponse<>(orderService.createOrder(orderRequestDto), HttpStatus.CREATED.value()), HttpStatus.CREATED);
     }
 
-    @GetMapping("{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<GenericResponse> getAllUserOrders(@PathVariable String userId) {
         return new ResponseEntity<>(new GenericResponse<>(orderService.getAllOrderByUser(userId)), HttpStatus.OK);
     }
@@ -31,7 +31,7 @@ public class OrderController {
         return new ResponseEntity<>(new GenericResponse<>(orderService.updateOrder(orderRequestDto, orderId)), HttpStatus.OK);
     }
 
-    @DeleteMapping("{orderId}/{userId}")
+    @DeleteMapping("{orderId}/user/{userId}")
     public ResponseEntity<GenericResponse> deleteOrder(@PathVariable String orderId, @PathVariable String userId) {
         orderService.removeOrder(orderId, userId);
         return new ResponseEntity<>(new GenericResponse<>("order deleted successfully"), HttpStatus.OK);

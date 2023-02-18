@@ -69,12 +69,12 @@ public class ProductController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @PostMapping("/images/{productId}")
+    @PostMapping("{productId}/images")
     public ResponseEntity<GenericResponse> uploadProductImage(@PathVariable String productId, @RequestParam("file") MultipartFile file) {
         return new ResponseEntity<>(new GenericResponse(productService.uploadImage(productId, file), HttpStatus.CREATED.value()), HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/images/{productId}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "{productId}/images", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> serveUserImage(@PathVariable String productId) {
         return ResponseEntity
                 .ok(productService.getProductResources(productId));

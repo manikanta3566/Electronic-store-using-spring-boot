@@ -49,12 +49,12 @@ public class CategoryController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @PostMapping("/images/{categoryId}")
+    @PostMapping("{categoryId}/images")
     public ResponseEntity<GenericResponse> uploadImage(@PathVariable String categoryId, @RequestParam("file") MultipartFile file) {
         return new ResponseEntity<>(new GenericResponse<>(categoryService.uploadImage(categoryId, file)), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/images/{categoryId}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "{categoryId}/images", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<?> serveImage(@PathVariable String categoryId) {
         return new ResponseEntity<>(categoryService.getCategoryResources(categoryId), HttpStatus.OK);
     }

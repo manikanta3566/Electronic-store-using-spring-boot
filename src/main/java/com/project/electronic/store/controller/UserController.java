@@ -69,12 +69,12 @@ public class UserController {
         return new ResponseEntity<>(new GenericResponse<>(users), HttpStatus.OK);
     }
 
-    @PostMapping("/images/{userId}")
+    @PostMapping("{userId}/images")
     public ResponseEntity<GenericResponse> uploadUserImage(@PathVariable String userId, @RequestParam("file")MultipartFile file){
         return new ResponseEntity<>(new GenericResponse(userService.userImageUpload(file,userId),HttpStatus.CREATED.value()),HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/images/{userId}",produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "{userId}/images",produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> serveUserImage(@PathVariable String userId){
       return ResponseEntity
               .ok(userService.getUserImageResources(userId));
